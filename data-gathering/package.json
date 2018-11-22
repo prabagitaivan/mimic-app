@@ -1,0 +1,16 @@
+{
+  "name": "data-gathering",
+  "version": "1.0.0",
+  "description": "app to gather data for mimic speech",
+  "main": "server.js",
+  "scripts": {
+    "setup": "npm install && mkdir data && cd data && mkdir data1 data2 data3 data4 data5 data6 data7 data8 data9",
+    "start": "node server.js"
+  },
+  "author": "Prabagita Ivan",
+  "license": "ISC",
+  "dependencies": {
+    "formidable": "^1.2.1",
+    "recordrtc": "^5.4.8"
+  }
+}

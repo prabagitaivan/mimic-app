@@ -1,0 +1,44 @@
+<html>
+
+<body>
+  <div>
+    <h3> u - v (ve) - w (we) - x (eks) - y (ye) </h3>
+    <audio></audio>
+    <button id='btnRecord'>Record</button>
+    <button id='btnStop' disabled>Stop</button>
+    <hr />
+  </div>
+  <button id='btnNext'>Next</button>
+
+  <script src='/node_modules/recordrtc/RecordRTC.js'></script>
+  <script src='./script.js'></script>
+  <script>
+    var btnNext = document.querySelector('#btnNext');
+
+    function postFiles() {
+      var blob = recorder.getBlob();
+      var fileName = generateRandomString() + '.wav';
+      var file = new File([blob], fileName, { type: 'audio/wav' });
+
+      audio.src = '';
+
+      xhr('/uploadData5', file, function (responseText) {
+        var fileURL = JSON.parse(responseText).fileURL;
+
+        console.info('fileURL', fileURL);
+        audio.src = fileURL;
+        audio.play();
+        audio.muted = false;
+        audio.controls = true;
+      });
+
+      if (mediaStream) mediaStream.stop();
+    }
+
+    btnNext.onclick = function () {
+      open('/train/data6.html', '_self');
+    };
+  </script>
+</body>
+
+</html>
