@@ -1,0 +1,36 @@
+<html>
+
+<body>
+  <h1> Mimic Speech </h1>
+  <div>
+    <input id='inSpeechId' placeholder='Speech ID' />
+  </div>
+  <div>
+    <p>a - i - u - e - o</p>
+    <p>b - d - h - k - l</p>
+    <p>m - n - p - r - s - t</p>
+    <p>na - ma - mu </p>
+    <p>ta - nya - kan</p>
+    <p>di - ri - ku</p>
+  </div>
+  <div>
+    <audio></audio>
+    <button id='btnRecord'>Record</button>
+    <button id='btnStop' disabled>Stop</button>
+  </div>
+  <div>
+    <br />
+    <button id='btnIdentify'>Identify Speech</button>
+    <br />
+  </div>
+  <div>
+    <br />
+    <button id='btnFinish'>Finish</button></Link>
+    <br />
+  </div>
+
+  <script src='/node_modules/recordrtc/RecordRTC.js'></script>
+  <script src='./script/identify.js'></script>
+</body>
+
+</html>

@@ -1,6 +1,0 @@
-# express generate
-bin/www
-
-# react generate
-client/src/serviceWorker.js
-client/node_modules

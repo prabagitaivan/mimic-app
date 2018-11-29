@@ -35,23 +35,8 @@ function serverHandler(request, response) {
     return;
   }
   
-  if (filename && filename.toString().indexOf(isWin ? '\\uploadData6' : '/uploadData2') != -1 && request.method.toLowerCase() == 'post') {
+  if (filename && filename.toString().indexOf(isWin ? '\\uploadData6' : '/uploadData6') != -1 && request.method.toLowerCase() == 'post') {
     uploadData(6, request, response);
-    return;
-  }
-  
-  if (filename && filename.toString().indexOf(isWin ? '\\uploadData7' : '/uploadData2') != -1 && request.method.toLowerCase() == 'post') {
-    uploadData(7, request, response);
-    return;
-  }
-  
-  if (filename && filename.toString().indexOf(isWin ? '\\uploadData8' : '/uploadData2') != -1 && request.method.toLowerCase() == 'post') {
-    uploadData(8, request, response);
-    return;
-  }
-  
-  if (filename && filename.toString().indexOf(isWin ? '\\uploadData9' : '/uploadData2') != -1 && request.method.toLowerCase() == 'post') {
-    uploadData(9, request, response);
     return;
   }
 
@@ -91,7 +76,7 @@ app = app.listen(port, process.env.IP || "0.0.0.0", function () {
 
   app.address = addr.address;
 
-  console.log("Server listening at", 'http://' + addr.address + ":" + addr.port + '/index.html');
+  console.log("Server listening at", 'http://' + addr.address + ":" + addr.port + '/data-gathering/home.html');
 });
 
 function uploadData(x, request, response) {
