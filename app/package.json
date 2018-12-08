@@ -4,16 +4,21 @@
   "description": "app to mimic speech in bahasa indonesia",
   "main": "server.js",
   "scripts": {
-    "setup": "npm install && mkdir generate upload",
-    "start": "node server.js"
+    "setup": "npm install && mkdir data && cd data && mkdir collect speech generate train && cd collect && mkdir a i t na ma mu di ri ku kan && cd ../train && mkdir model",
+    "start": "node server.js",
+    "train": "node app/train/train.js"
   },
   "author": "Prabagita Ivan",
   "license": "ISC",
   "dependencies": {
+    "@tensorflow/tfjs-node": "^0.1.21",
+    "crypto-random-string": "^1.0.0",
     "formidable": "^1.2.1",
+    "fourier-transform": "^1.1.2",
     "mongoose": "^5.3.14",
+    "node-mfcc": "0.0.2",
+    "node-wav": "0.0.2",
     "recordrtc": "^5.4.8",
-    "wav-decoder": "^1.3.0",
-    "wav-encoder": "^1.3.0"
+    "shuffle-array": "^1.0.1"
   }
 }
