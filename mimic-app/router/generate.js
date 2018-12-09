@@ -51,12 +51,12 @@ function generateSpeech(address, port, request) {
 
       let fileURL;
       let error;
-      let resultDB = [];
+      let resultDB = {};
       let buffer;
 
       try {
         model.speechDatas.db = await connection.connect();
-        resultDB = await model.speechDatas.find({ name: name }).select('phonemes -_id').exec();
+        resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id').exec();
         await connection.disconnect();
       } catch (err) {
         error = err;
@@ -66,7 +66,7 @@ function generateSpeech(address, port, request) {
       }
 
       const phonemes = [];
-      for (phoneme in resultDB[0].phonemes) phonemes.push(phoneme);
+      for (phoneme in resultDB.phonemes) phonemes.push(phoneme);
 
       const extractWord = [];
       for (i = 0; i < words.length; i++) {
@@ -82,7 +82,7 @@ function generateSpeech(address, port, request) {
           extractWord.push(words.substring(i, i + 1));
         } else {
           error = words[i] + ' is not found or registered from the speech data. ' +
-            'Registered phonemes : ' + phonemes;
+            'Registered ' + name + 'phonemes : ' + phonemes;
           console.log('Error:', error);
 
           resolve(JSON.stringify({ fileURL: fileURL, error: error }));
@@ -99,7 +99,7 @@ function generateSpeech(address, port, request) {
         if (extractWord[i] === ' ') {
           nextFreq = new Float32Array(sampleRate).map(() => 0);
         } else {
-          buffer = fs.readFileSync(resultDB[0].phonemes[extractWord[i]]);
+          buffer = fs.readFileSync(resultDB.phonemes[extractWord[i]]);
           nextFreq = wav.decode(buffer).channelData[0].slice(0, sampleRate);
         }
 
@@ -115,8 +115,8 @@ function generateSpeech(address, port, request) {
       const fileName = 'upload_' + cryptoRandomString(32) + '.wav';
       const file = process.cwd() + dirData + dirGenerate + fileName;
 
-      buffer = wav.encode(channelData, {sampleRate: sampleRate});
-      fs.writeFileSync(file, new Buffer(buffer));
+      buffer = wav.encode(channelData, { sampleRate: sampleRate });
+      fs.writeFileSync(file, Buffer.from(buffer));
 
       fileURL = 'http://' + address + ':' + port + '/data/generate/' + fileName;
 

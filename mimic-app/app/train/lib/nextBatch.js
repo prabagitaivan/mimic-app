@@ -1,4 +1,4 @@
-const tf = require('@tensorflow/tfjs-node/node_modules/@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs');
 
 function getData(dataset, iteration, batch, time, freq) {
   const data = new Float32Array(batch * time * freq);
@@ -18,6 +18,7 @@ function getData(dataset, iteration, batch, time, freq) {
     }
   }
 
+  tf.tensor4d(data, shape).print();
   return tf.tensor4d(data, shape);
 }
 

@@ -6,14 +6,18 @@ const btnFinish = document.querySelector('#btnFinish');
 
 let recorder;
 let mediaStream = null;
+let filePath = '';
 
 function xhrPostUploadFile(file) {
   const request = new XMLHttpRequest();
   request.onreadystatechange = function () {
     if (request.readyState == 4 && request.status == 200) {
       const fileURL = JSON.parse(request.responseText).fileURL;
-  
+      filePath = JSON.parse(request.responseText).filePath;
+
       console.info('fileURL', fileURL);
+      console.info('filePath', filePath);
+
       audio.src = fileURL;
       audio.play();
       audio.muted = false;
@@ -32,16 +36,19 @@ function xhrPostIdentifySpeech(data) {
   request.onreadystatechange = function () {
     if (request.readyState == 4 && request.status == 200) {
       const status = JSON.parse(request.responseText).status;
-  
+
       console.info('status', status);
       alert(status);
+
+      btnRecord.disabled = false;
+      btnIdentify.disabled = false;
     }
   };
   request.open('POST', '/identifySpeech');
 
   const formData = new FormData();
   formData.append('name', data.name);
-  formData.append('fileURL', data.fileURL);
+  formData.append('filePath', data.filePath);
   request.send(formData);
 }
 
@@ -84,7 +91,7 @@ btnRecord.onclick = function () {
 
   captureUserMedia(function (stream) {
     mediaStream = stream;
-    
+
     recorder = RecordRTC(mediaStream, {
       mimeType: 'audio/wav',
       recorderType: StereoAudioRecorder,
@@ -107,16 +114,19 @@ btnRecord.onclick = function () {
 };
 
 btnIdentify.onclick = function () {
-  if (input.value.length === 0){
+  if (input.value.length === 0) {
     alert('Please input speech id');
-  } else if (audio.src === ''){
+  } else if (filePath.length === 0) {
     alert('Please record some shown phonemes');
   } else {
     const data = {
       name: input.value,
-      fileURL: audio.src
+      filePath: filePath
     };
-    console.log(data.fileURL);
+
+    btnRecord.disabled = true;
+    btnIdentify.disabled = true;
+
     xhrPostIdentifySpeech(data);
   }
 };

@@ -5,11 +5,15 @@ var speechDatas = mongoose.model('speechdatas', mongoose.Schema({
   phonemes: Object,
 }));
 
-var phonemes = mongoose.model('phonemes', mongoose.Schema({
-  phoneme: String,
+var models = mongoose.model('models', mongoose.Schema({
+  location: String,
+  createAt: {
+    type: Date,
+    default: Date.now
+  }
 }));
 
 module.exports = {
   speechDatas,
-  phonemes
+  models
 };

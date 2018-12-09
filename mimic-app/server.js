@@ -14,7 +14,7 @@ async function serverHandler(request, response) {
     response.end();
     return;
   }
-  
+
   const identify = await require('./router/identify')(address, port, filename, request);
   if (typeof identify !== 'undefined') {
     response.writeHead(200);
