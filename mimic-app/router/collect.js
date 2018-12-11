@@ -1,26 +1,12 @@
 const formidable = require('formidable');
 const util = require('util');
 
-async function router(address, port, filename, request) {
-  let response;
-
-  if (request.method === 'POST') {
-    if (filename.toString().indexOf('\\uploadCollectA') != -1) response = await uploadCollect(address, port, 'a', request);
-    else if (filename.toString().indexOf('\\uploadCollectI') != -1) response = await uploadCollect(address, port, 'i', request);
-    else if (filename.toString().indexOf('\\uploadCollectT') != -1) response = await uploadCollect(address, port, 't', request);
-    else if (filename.toString().indexOf('\\uploadCollectNa') != -1) response = await uploadCollect(address, port, 'na', request);
-    else if (filename.toString().indexOf('\\uploadCollectMa') != -1) response = await uploadCollect(address, port, 'ma', request);
-    else if (filename.toString().indexOf('\\uploadCollectMu') != -1) response = await uploadCollect(address, port, 'mu', request);
-    else if (filename.toString().indexOf('\\uploadCollectDi') != -1) response = await uploadCollect(address, port, 'di', request);
-    else if (filename.toString().indexOf('\\uploadCollectRi') != -1) response = await uploadCollect(address, port, 'ri', request);
-    else if (filename.toString().indexOf('\\uploadCollectKu') != -1) response = await uploadCollect(address, port, 'ku', request);
-    else if (filename.toString().indexOf('\\uploadCollectKan') != -1) response = await uploadCollect(address, port, 'kan', request);
-  }
-
-  return response;
-}
-
-
+/**
+ * `uploadCollect` upload file in the `request` based on defined directory and
+ * then convert its path location to url.
+ * 
+ * Return the url as `fileURL`.
+ */
 function uploadCollect(address, port, label, request) {
   const dirData = '\\data\\';
   const dirCollect = '\\collect\\';
@@ -46,4 +32,29 @@ function uploadCollect(address, port, label, request) {
   });
 }
 
+/**
+ * `router` handle all collect app request, each response corresponding to each request.
+ * There are a lot of request categorized by collect app but all of them is basically `uploadCollect`. 
+ * When the request doesn't match anything it return nothing.
+ */
+async function router(address, port, filename, request) {
+  let response;
+
+  if (request.method === 'POST') {
+    if (filename.toString().indexOf('\\uploadCollectA') != -1) response = await uploadCollect(address, port, 'a', request);
+    else if (filename.toString().indexOf('\\uploadCollectI') != -1) response = await uploadCollect(address, port, 'i', request);
+    else if (filename.toString().indexOf('\\uploadCollectT') != -1) response = await uploadCollect(address, port, 't', request);
+    else if (filename.toString().indexOf('\\uploadCollectNa') != -1) response = await uploadCollect(address, port, 'na', request);
+    else if (filename.toString().indexOf('\\uploadCollectMa') != -1) response = await uploadCollect(address, port, 'ma', request);
+    else if (filename.toString().indexOf('\\uploadCollectMu') != -1) response = await uploadCollect(address, port, 'mu', request);
+    else if (filename.toString().indexOf('\\uploadCollectDi') != -1) response = await uploadCollect(address, port, 'di', request);
+    else if (filename.toString().indexOf('\\uploadCollectRi') != -1) response = await uploadCollect(address, port, 'ri', request);
+    else if (filename.toString().indexOf('\\uploadCollectKu') != -1) response = await uploadCollect(address, port, 'ku', request);
+    else if (filename.toString().indexOf('\\uploadCollectKan') != -1) response = await uploadCollect(address, port, 'kan', request);
+  }
+
+  return response;
+}
+
+// export `router` functions.
 module.exports = router;

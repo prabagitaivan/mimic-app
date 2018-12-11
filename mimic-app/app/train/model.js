@@ -1,6 +1,10 @@
 const tf = require('@tensorflow/tfjs');
 require('@tensorflow/tfjs-node');
 
+/**
+ * `modelML` model the tensorflow neural network.
+ * It is CNN model with cross entropy loss, and sgd (stochastic gradient descent) optimizer.
+ */
 function modelML(input, output) {
   const model = tf.sequential();
   model.add(tf.layers.conv2d({ inputShape: input, filters: 8, kernelSize: [4, 2], activation: 'relu' }));
@@ -26,4 +30,5 @@ function modelML(input, output) {
   return model;
 }
 
+// export `modelML` function.
 module.exports = modelML;

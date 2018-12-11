@@ -10,17 +10,68 @@ const model = require('../db/model');
 
 const labels = ['a', 'i', 't', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan'];
 
-async function router(address, port, filename, request) {
-  let response;
+/**
+ * `extract` decode wav based on `filePath`, frame it, extract by FFT and MFCC and
+ * convert it to tensorflow input shape.
+ * 
+ * Return 4d tensor.
+ */
+function extract(filePath) {
+  const sampleRate = 16000;
+  const frameSize = 25 / 1000 * sampleRate; // 400
+  const frameShift = 10 / 1000 * sampleRate; // 160
+  const fftSize = 256; // based on the next power of 2 from 400 -> 512 as the input.
+  const melCount = 40;
+  const lowHz = 300;
+  const highHz = 8000;
 
-  if (request.method === 'POST') {
-    if (filename.toString().indexOf('\\uploadSpeech') != -1) response = await uploadSpeech(address, port, request);
-    if (filename.toString().indexOf('\\identifySpeech') != -1) response = await identifySpeech(address, port, request);
+  const mfcc = require('node-mfcc/src/mfcc').construct(fftSize, melCount, lowHz, highHz, sampleRate);
+
+  // decode wav.
+  const sample = wav.decode(fs.readFileSync(filePath)).channelData[0];
+
+  // framing the sample.
+  const frameSample = [];
+  for (i = 0; i <= sample.length - frameSize; i = i + frameShift) {
+    const frame = new Float32Array(fftSize * 2);
+    for (j = 0; j < frame.length; j++) {
+      if (j < frameSize) frame[j] = sample[i + j];
+      else frame[j] = 0;
+    }
+    frameSample.push(frame);
   }
 
-  return response;
+  // extract by FFT and MFCC.
+  const extractedSample = [];
+  for (i = 0; i < frameSample.length; i++) {
+    const fftSample = fft(frameSample[i]);
+    extractedSample.push(new Float32Array(mfcc(fftSample)));
+  }
+
+  // define tensorflow input shape.
+  const time = extractedSample.length;
+  const freq = extractedSample[0].length;
+  const data = new Float32Array(time * freq);
+  const shape = [1, time, freq, 1];
+
+  // convert extracted wav to tensorflow input data.
+  for (i = 0; i < time; i++) {
+    const melFreq = extractedSample[i];
+    const offset = i * freq;
+
+    data.set(melFreq, offset);
+  }
+
+  // return 4d tensor. 
+  return tf.tensor4d(data, shape);
 }
 
+/**
+ * `uploadSpeech` upload file in the `request` based on defined directory and
+ * then convert its path location to url.
+ * 
+ * Return the url and path location as `fileURL` and `filePath`.
+ */
 function uploadSpeech(address, port, request) {
   const dirData = '\\data\\';
   const dirSpeech = '\\speech\\';
@@ -47,57 +98,75 @@ function uploadSpeech(address, port, request) {
   });
 }
 
+/**
+ * `identifySpeech` load lastest saved trained model from MongoDB `models` collection.
+ * Use it to identify the speech file from `filePath` by `extract` then feed it to `model`.
+ * Matched speech will register the phoneme to corresponding `name` and update it on MongoDB.
+ * 
+ * Error connection will return message. Not found model will return message. Unsatisfied identification,
+ * results below 0.75 (75%) from `model` will return message. None of those is occured will update the MongoDB
+ * `speechDatas` collection on its `name` and identified phoneme `filePath` and return message. The returned 
+ * message wheter just information or even error is return as `status`.
+ */
 function identifySpeech(request) {
   const form = new formidable.IncomingForm();
 
   return new Promise(function (resolve) {
     form.parse(request, async function (err, fields, files) {
+      // take `name` and `filePath` data from POST request. 
       const name = fields.name;
       const filePath = fields.filePath;
 
       let status;
       let resultDB = {};
 
+      // load model location from MongoDB.
       try {
         model.models.db = await connection.connect();
-        resultDB = await model.models.findOne({}).sort({ createAt: -1 }).select('location -_id').exec();
+        resultDB = await model.models.findOne({}).sort({ createAt: -1 }).select('location -_id -__v').exec();
         await connection.disconnect();
 
+        // return if nothing is found.
         if (typeof resultDB.location === 'undefined') {
           status = 'No train model found.';
           console.log('Status:', status);
 
           resolve(JSON.stringify({ status: status }));
         }
-      } catch (err) {
+      } catch (err) { // return if connection error is occured.
         status = err;
         console.log('Status:', error);
 
         resolve(JSON.stringify({ status: status }));
       }
 
+      // load the model as `tfModel` from model location and extract speech as `data` from `filePath`. 
       const locationURL = resultDB.location;
       const tfModel = await tf.loadModel(locationURL + '/model.json');
-      const data = extractWav(filePath);
+      const data = extract(filePath);
 
+      // identify the speech and process data from it.
       const prediction = tfModel.predict(data).dataSync();
       let predictionLabel = 0;
       for (i = 0; i < prediction.length; i++) {
         if (prediction[predictionLabel] <= prediction[i]) predictionLabel = i;
       }
-
       const label = labels[predictionLabel]
       const labelData = prediction[predictionLabel]
+
+      // return if result unsatisfied, below 75%.
       if (labelData < 0.75) {
         status = 'No phonemes matched.';
         console.log('Status:', status);
 
         resolve(JSON.stringify({ status: status }));
       } else {
+        // find if `name` is already registered in MongoDB or not.
         try {
           model.speechDatas.db = await connection.connect();
-          resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id').exec();
+          resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id -__v').exec();
 
+          // create the document if not found, update if found before update to MongoDB.
           let updateData = {};
           if (resultDB === null) {
             updateData.name = name;
@@ -111,65 +180,38 @@ function identifySpeech(request) {
           await model.speechDatas.updateOne({ name: name }, updateData, { upsert: true });
 
           await connection.disconnect();
-        } catch (err) {
+        } catch (err) { // return if connection error is occured.
           status = err;
           console.log('Status:', status);
 
           resolve(JSON.stringify({ status: status }));
         }
 
-        status = 'Matched phoneme ' + label + '! Phoneme registered to ' + name + '.';
+        status = 'Matched phoneme ' + label + '(' + labelData + ')! Phoneme registered to ' + name + '.';
         console.log('Status:', status);
 
+        // return success identify speech information. 
         resolve(JSON.stringify({ status: status }));
       }
     });
   });
 }
 
-function extractWav(filePath) {
-  const fftSize = 256;
-  const melCount = 40;
-  const lowHz = 300;
-  const highHz = 8000;
-  const sampleRate = 16000;
-  const frameSize = 25 / 1000 * sampleRate;
-  const frameShift = 10 / 1000 * sampleRate;
+/**
+ * `router` handle all mimic app identify section request, each response corresponding to each request.
+ * There are 2 type request categorized by mimic app identify section, `uploadSpeech` and `identifySpeech`. 
+ * When the request doesn't match anything it return nothing.
+ */
+async function router(address, port, filename, request) {
+  let response;
 
-  const mfcc = require('node-mfcc/src/mfcc').construct(fftSize, melCount, lowHz, highHz, sampleRate);
-
-  // const sample = wav.decode(fs.readFileSync(filePath)).channelData[0];
-  const sample = wav.decode(fs.readFileSync('C:\\Users\\Prabagita Ivan\\Desktop\\aaaa.wav')).channelData[0];
-
-  const frameSample = [];
-  for (i = 0; i <= sample.length - frameSize; i = i + frameShift) {
-    const frame = new Float32Array(fftSize * 2);
-    for (j = 0; j < frame.length; j++) {
-      if (j < frameSize) frame[j] = sample[i + j];
-      else frame[j] = 0;
-    }
-    frameSample.push(frame);
+  if (request.method === 'POST') {
+    if (filename.toString().indexOf('\\uploadSpeech') != -1) response = await uploadSpeech(address, port, request);
+    if (filename.toString().indexOf('\\identifySpeech') != -1) response = await identifySpeech(address, port, request);
   }
 
-  const extractedSample = [];
-  for (i = 0; i < frameSample.length; i++) {
-    const fftSample = fft(frameSample[i]);
-    extractedSample.push(new Float32Array(mfcc(fftSample)));
-  }
-
-  const time = extractedSample.length;
-  const freq = extractedSample[0].length;
-  const data = new Float32Array(time * freq);
-  const shape = [1, time, freq, 1];
-
-  for (i = 0; i < time; i++) {
-    const melFreq = extractedSample[i];
-    const offset = i * freq;
-
-    data.set(melFreq, offset);
-  }
-
-  return tf.tensor4d(data, shape);
+  return response;
 }
 
+// export `router` functions.
 module.exports = router;

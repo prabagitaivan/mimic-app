@@ -8,6 +8,13 @@ const btnFinish = document.querySelector('#btnFinish');
 
 let speechData;
 
+/**
+ * `xhrGetSpeechData` load all speech data from the server.
+ * 
+ * Send GET `loadSpeech` request.
+ * Accept `speechData` from response to be used as `listSpeechData` datalist.
+ * It also give alert message whenever the response contain `error` message.
+ */
 function xhrGetSpeechData() {
   const request = new XMLHttpRequest();
   request.onreadystatechange = function () {
@@ -37,6 +44,15 @@ function xhrGetSpeechData() {
   request.send();
 }
 
+/**
+ * `xhrPostGenerateSpeech` send `words` based on `name` to server, convert it to wav file and
+ * receive uri the file.
+ * 
+ * Send POST `generateSpeech` request with one of `speechData` list as `name` and
+ * text that want to be generated from textarea as `words` on it.
+ * Accept `fileURL` from response and use it as `audio` source.
+ * It also give alert message whenever the response contain `error` message.
+ */
 function xhrPostGenerateSpeech(data) {
   const request = new XMLHttpRequest();
   request.onreadystatechange = function () {
@@ -65,6 +81,9 @@ function xhrPostGenerateSpeech(data) {
   request.send(formData);
 }
 
+/**
+ * Check inputed value on datalist contain speech data on `speechData` that get from the server.
+ */
 function isIdExist(x) {
   for (i = 0; i < speechData.length; i++) {
     if (x === speechData[i]) return true;
@@ -75,6 +94,10 @@ function isIdExist(x) {
 
 body.onload = xhrGetSpeechData();
 
+/**
+ * Validate inputed values is exist and empty or not.
+ * Existed and not empty values will pass the value to `xhrPostGenerateSpeech`
+ */
 btnGenerate.onclick = function () {
   if (input.value.length === 0) {
     alert('Please select speech id');

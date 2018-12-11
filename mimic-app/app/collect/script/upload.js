@@ -4,6 +4,12 @@ const audio = document.querySelector('audio');
 let recorder;
 let mediaStream = null;
 
+/**
+ * `xhrPostUploadCollect` send `file` to the server, upload it and receive uri and path of the file.
+ * 
+ * Send POST `uploadCollect` request with wav `file` on it.
+ * Accept `fileURL` from response and use it as `audio` source.
+ */
 function xhrPostUploadCollect(url, file) {
   const request = new XMLHttpRequest();
   request.onreadystatechange = function () {
@@ -24,6 +30,9 @@ function xhrPostUploadCollect(url, file) {
   request.send(formData);
 }
 
+/**
+ * `generateRandomString` generate random 32 long crypto string.
+ */
 function generateRandomString() {
   if (window.crypto) {
     const a = window.crypto.getRandomValues(new Uint32Array(3));
@@ -39,7 +48,10 @@ function generateRandomString() {
   }
 }
 
-
+/**
+ * `captureUserMedia` ask permission access to use microphone.
+ * When the permission is granted it return a callback. 
+ */
 function captureUserMedia(successCallback) {
   navigator.getUserMedia({ audio: true }, successCallback, function (error) {
     alert('Unable to capture your microphone. Please check console logs.');
@@ -47,10 +59,13 @@ function captureUserMedia(successCallback) {
   });
 }
 
+/**
+ * Start record after microphone access is granted.
+ * It record on 16000 sample rate, mono, and stop automatically after 1 second.
+ */
 btnRecord.onclick = function () {
-  btnRecord.disabled = true;
-
   captureUserMedia(function (stream) {
+    btnRecord.disabled = true;
     mediaStream = stream;
 
     recorder = RecordRTC(mediaStream, {

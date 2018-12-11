@@ -1,6 +1,9 @@
 const connection = require('../../../db/connection');
 const model = require('../../../db/model');
 
+/**
+ * `saveModelDB` save `location` to `models` collection in mimic_speech database in MongoDB.
+ */
 async function saveModelDB(location) {
   try {
     model.models.db = await connection.connect();
@@ -12,4 +15,5 @@ async function saveModelDB(location) {
   }
 }
 
+// export `saveModelDB` function.
 module.exports = saveModelDB;

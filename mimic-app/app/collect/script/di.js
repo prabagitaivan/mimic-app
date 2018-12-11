@@ -1,5 +1,9 @@
 const btnNext = document.querySelector('#btnNext');
 
+/**
+ * `postFiles` create wav file from `RecordRTC` and
+ * then use it to send `xhrPostUploadCollect` request.
+ */
 function postFiles() {
   const blob = recorder.getBlob();
   const fileName = generateRandomString() + '.wav';

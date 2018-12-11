@@ -8,6 +8,13 @@ let recorder;
 let mediaStream = null;
 let filePath = '';
 
+/**
+ * `xhrPostUploadFile` send `file` to the server, upload it and receive uri and path of the file.
+ * 
+ * Send POST `uploadSpeech` request with wav `file` on it.
+ * Accept `fileURL` from response and use it as `audio` source.
+ * It also accept `filePath` from response and use it later as input for `xhrPostIdentifySpeech`.
+ */
 function xhrPostUploadFile(file) {
   const request = new XMLHttpRequest();
   request.onreadystatechange = function () {
@@ -31,6 +38,12 @@ function xhrPostUploadFile(file) {
   request.send(formData);
 }
 
+/**
+ * `xhrPostIdentifySpeech` send `words` based on `name` to server, convert it to wav file and uri.
+ * 
+ * Send POST `identifySpeech` request with input text as `name` and `filePath` on it.
+ * Accept `status` from response and alert it.
+ */
 function xhrPostIdentifySpeech(data) {
   const request = new XMLHttpRequest();
   request.onreadystatechange = function () {
@@ -52,6 +65,10 @@ function xhrPostIdentifySpeech(data) {
   request.send(formData);
 }
 
+/**
+ * `postFiles` create wav file from `RecordRTC` and
+ * then use it to send `xhrPostUploadFile` request.
+ */
 function postFiles() {
   const blob = recorder.getBlob();
   const fileName = generateRandomString() + '.wav';
@@ -64,6 +81,9 @@ function postFiles() {
   if (mediaStream) mediaStream.stop();
 }
 
+/**
+ * `generateRandomString` generate random 32 long crypto string.
+ */
 function generateRandomString() {
   if (window.crypto) {
     const a = window.crypto.getRandomValues(new Uint32Array(3));
@@ -79,6 +99,10 @@ function generateRandomString() {
   }
 }
 
+/**
+ * `captureUserMedia` ask permission access to use microphone.
+ * When the permission is granted it return a callback. 
+ */
 function captureUserMedia(successCallback) {
   navigator.getUserMedia({ audio: true }, successCallback, function (error) {
     alert('Unable to capture your microphone. Please check console logs.');
@@ -86,10 +110,13 @@ function captureUserMedia(successCallback) {
   });
 }
 
+/**
+ * Start record after microphone access is granted.
+ * It record on 16000 sample rate, mono, and stop automatically after 1 second.
+ */
 btnRecord.onclick = function () {
-  btnRecord.disabled = true;
-
   captureUserMedia(function (stream) {
+    btnRecord.disabled = true;
     mediaStream = stream;
 
     recorder = RecordRTC(mediaStream, {
@@ -113,6 +140,10 @@ btnRecord.onclick = function () {
   });
 };
 
+/**
+ * Validate inputed values is exist and empty or not.
+ * Existed and not empty values will pass the value to `xhrPostIdentifySpeech`
+ */
 btnIdentify.onclick = function () {
   if (input.value.length === 0) {
     alert('Please input speech id');
