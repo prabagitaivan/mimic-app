@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var connection;
+let connection;
 
 /**
  * `connect` establish connection to mongodb mimic_speech database on localhost.

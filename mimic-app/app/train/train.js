@@ -34,7 +34,7 @@ const accuracy = [];
  * Train iterate `trainIteration` times and test every `testIteration` in `trainIteration`.
  * Every iteration `loss` and `accuracy` is printed. Every test is occured and the last iteration, 
  * `confusionMatrix` is printed, `model` is saved, the saved model location is saved to MongoDB,
- * `loss` and `accuration` is saved as csv.
+ * `loss` and `accuracy` is saved as csv.
  */
 async function train() {
   for (i = 0; i < trainIteration; i++) {
