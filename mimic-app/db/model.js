@@ -1,13 +1,13 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 // define `speechDatas` schema for its mongodb collection.
-var speechDatas = mongoose.model('speechdatas', mongoose.Schema({
+const speechDatas = mongoose.model('speechdatas', mongoose.Schema({
   name: String,
   phonemes: Object,
 }));
 
 // define `models` schema for its mongodb collection.
-var models = mongoose.model('models', mongoose.Schema({
+const models = mongoose.model('models', mongoose.Schema({
   location: String,
   createAt: {
     type: Date,

@@ -10,7 +10,7 @@ async function saveModelDB(location) {
     await model.models.create({ location });
     await connection.disconnect();
   } catch (err) {
-    error = err;
+    error = err.errmsg;
     console.log('Error:', error);
   }
 }

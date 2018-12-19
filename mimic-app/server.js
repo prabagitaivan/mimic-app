@@ -3,6 +3,10 @@ const url = require('url');
 const path = require('path');
 const fs = require('fs');
 
+// define the `address` and `port`.
+const address = process.env.IP || 'localhost';
+const port = 80;
+
 /**
  * `serverHandler` handle all request to the server each response corresponding to each request.
  * There are 3 type main router `collect`, `identify`, `generate` to handle any request corresponding to them.
@@ -61,10 +65,6 @@ async function serverHandler(request, response) {
     });
   });
 }
-
-// define the `address` and `port`.
-const address = process.env.IP || 'localhost';
-const port = 80;
 
 let app;
 

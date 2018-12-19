@@ -23,7 +23,7 @@ function modelML(input, output) {
 
   model.compile({
     loss: 'categoricalCrossentropy',
-    optimizer: tf.train.sgd(0.0025),
+    optimizer: tf.train.sgd(0.0001),
     metrics: ['accuracy']
   });
 

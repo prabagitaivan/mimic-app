@@ -6,7 +6,7 @@ const connection = require('../db/connection');
 const model = require('../db/model');
 
 /**
- * `loadSpeech` load all registered name from MongoDB `speecDatas` collection.
+ * `loadSpeech` load all registered name from MongoDB `speechDatas` collection.
  * 
  * Return the array of name as `data` and `error` message if nothing is found or
  * connection error.
@@ -17,7 +17,7 @@ async function loadSpeech() {
 
   try {
     model.speechDatas.db = await connection.connect();
-    resultDB = await model.speechDatas.find({}).select('name -_id -__v').exec();
+    resultDB = await model.speechDatas.find({}).select('name -_id').exec();
     await connection.disconnect();
 
     if (resultDB.length === 0) {
@@ -25,7 +25,7 @@ async function loadSpeech() {
       console.log('Error:', error);
     }
   } catch (err) {
-    error = err;
+    error = err.errmsg;
     console.log('Error:', error);
   }
 
@@ -36,7 +36,7 @@ async function loadSpeech() {
 }
 
 /**
- * `generateSpeech` load registered phonemes from MongoDB `speecDatas` collection based on `name`.
+ * `generateSpeech` load registered phonemes from MongoDB `speechDatas` collection based on `name`.
  * Extract `words` as `extractWord`. Decode all coresponding `extractWord` based on the database result.
  * Combine them and encode to wav file and take its `fileURL` location.
  *  
@@ -49,7 +49,7 @@ function generateSpeech(address, port, request) {
     form.parse(request, async function (err, fields, files) {
       // take `name` and `words` data from POST request. 
       const name = fields.name;
-      const words = fields.words;
+      const words = fields.words.toLowerCase();
 
       let fileURL;
       let error;
@@ -59,10 +59,10 @@ function generateSpeech(address, port, request) {
       // load registered phonemes from MongoDB.
       try {
         model.speechDatas.db = await connection.connect();
-        resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id -__v').exec();
+        resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id').exec();
         await connection.disconnect();
       } catch (err) { // return if connection error is occured.
-        error = err;
+        error = err.errmsg;
         console.log('Error:', error);
 
         resolve(JSON.stringify({ fileURL: fileURL, error: error }));
@@ -133,7 +133,6 @@ function generateSpeech(address, port, request) {
       resolve(JSON.stringify({ fileURL: fileURL }));
     });
   });
-
 }
 
 /**

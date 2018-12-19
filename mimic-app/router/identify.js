@@ -123,7 +123,7 @@ function identifySpeech(request) {
       // load model location from MongoDB.
       try {
         model.models.db = await connection.connect();
-        resultDB = await model.models.findOne({}).sort({ createAt: -1 }).select('location -_id -__v').exec();
+        resultDB = await model.models.findOne({}).sort({ createAt: -1 }).select('location -_id').exec();
         await connection.disconnect();
 
         // return if nothing is found.
@@ -134,8 +134,8 @@ function identifySpeech(request) {
           resolve(JSON.stringify({ status: status }));
         }
       } catch (err) { // return if connection error is occured.
-        status = err;
-        console.log('Status:', error);
+        status = err.errmsg;
+        console.log('Status:', status);
 
         resolve(JSON.stringify({ status: status }));
       }
@@ -164,7 +164,7 @@ function identifySpeech(request) {
         // find if `name` is already registered in MongoDB or not.
         try {
           model.speechDatas.db = await connection.connect();
-          resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id -__v').exec();
+          resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id').exec();
 
           // create the document if not found, update if found before update to MongoDB.
           let updateData = {};
@@ -181,13 +181,13 @@ function identifySpeech(request) {
 
           await connection.disconnect();
         } catch (err) { // return if connection error is occured.
-          status = err;
+          status = err.errmsg;
           console.log('Status:', status);
 
           resolve(JSON.stringify({ status: status }));
         }
 
-        status = 'Matched phoneme ' + label + '(' + labelData + ')! Phoneme registered to ' + name + '.';
+        status = 'Matched phoneme ' + label + ' (' + (labelData.toFixed(2) / 1 * 100) + '%)! Phoneme registered to ' + name + '.';
         console.log('Status:', status);
 
         // return success identify speech information. 
@@ -207,7 +207,7 @@ async function router(address, port, filename, request) {
 
   if (request.method === 'POST') {
     if (filename.toString().indexOf('\\uploadSpeech') != -1) response = await uploadSpeech(address, port, request);
-    if (filename.toString().indexOf('\\identifySpeech') != -1) response = await identifySpeech(address, port, request);
+    if (filename.toString().indexOf('\\identifySpeech') != -1) response = await identifySpeech(request);
   }
 
   return response;
