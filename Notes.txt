@@ -1,15 +1,10 @@
-1.5 Update RAD
-2.2 Example and explanation of Neural Network
 2.3 Explanation of phonemic - Explanation of silabel
 2.4 Google Convolutional Neural Network for Small-footprint Keyword Spotting
 2.5 Additional explanation to convert to CNN
 2.5.3 Explanation of MFCC
 3.1 Update according to final app
 3.2 Update according to final app
-3.3.2 Browser tambahi explanation
 3.4 Update according to final app
-4.1 Update according to final app
-4.2 Update according to final app
 Figure 5.4 Rescreenshot update
 Figure 5.16 part (2) dihapus identify.js
 Figure 5.31 rescrenshot update
