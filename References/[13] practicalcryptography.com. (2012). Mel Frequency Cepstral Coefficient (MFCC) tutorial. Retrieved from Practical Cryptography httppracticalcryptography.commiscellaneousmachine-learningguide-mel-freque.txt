@@ -1,0 +1,1 @@
+practicalcryptography.com. (2012). Mel Frequency Cepstral Coefficient (MFCC) tutorial. Retrieved from Practical Cryptography httppracticalcryptography.commiscellaneousmachine-learningguide-mel-frequency-cepstral-coefficients-mfccs
