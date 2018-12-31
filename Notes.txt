@@ -1,11 +1,11 @@
-2.3 Explanation of phonemic - Explanation of silabel
-2.4 Google Convolutional Neural Network for Small-footprint Keyword Spotting
-2.5 Additional explanation to convert to CNN
-2.5.3 Explanation of MFCC
 Figure 5.4 Rescreenshot update
-Figure 5.16 part (2) dihapus identify.js
+Figure 5.6 ada phoneme
+Figure 5.11 ada phoneme
+Figure 5.18 ada phoneme
+Figure 5.21 ada phoneme
+Figure 5.24 ada phoneme
 Figure 5.31 rescrenshot update
 Figure 5.32 rescrenshot update
 Figure 5.33 part (2)
-6.2 Screenshot scenario dan tester result
+6.2 all figure screenshot scenariodan table tester result
 Update Table of Content-Table-Figure-References
