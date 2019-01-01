@@ -2,7 +2,7 @@ const fs = require('fs');
 const shuffle = require('shuffle-array');
 const extractWav = require('./extractWav');
 
-const labels = ['a', 'i', 't', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan'];
+const labels = ['a', 'i', 't', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan', 'unknown'];
 const loadTrain = [];
 const loadValidation = [];
 const loadTest = [];
@@ -13,7 +13,7 @@ const loadTest = [];
  * Return array of extracted waves. Every iteration when extracting the loaded files is printed.
  * If incosistent data is met, the process stop and exit.
  */
-function extractFiles(load, data, type) {
+function extractFiles(load, type) {
   const data = [];
   let lastSpectogram;
 
@@ -63,9 +63,9 @@ for (i = 0; i < labels.length; i++) {
   }
 }
 
-const datatrain = extractFiles(loadTrain, datatrain, 'Train');
-const datavalidation = extractFiles(loadValidation, datavalidation, 'Validation');
-const datatest = extractFiles(loadTest, datatest, 'Test');
+const datatrain = extractFiles(loadTrain, 'Train');
+const datavalidation = extractFiles(loadValidation, 'Validation');
+const datatest = extractFiles(loadTest, 'Test');
 
 // put `labels`, `datatrain`, `datavalidation`, `datatest` to JSON and export it.
 const dataset = { labels, datatrain, datavalidation, datatest }

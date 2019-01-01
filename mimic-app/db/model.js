@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // define `speechDatas` schema for its mongodb collection.
 const speechDatas = mongoose.model('speechdatas', mongoose.Schema({
   name: String,
-  phonemes: Object,
+  syllables: Object,
 }));
 
 // define `models` schema for its mongodb collection.

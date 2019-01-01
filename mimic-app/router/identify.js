@@ -8,7 +8,7 @@ require('@tensorflow/tfjs-node');
 const connection = require('../db/connection');
 const model = require('../db/model');
 
-const labels = ['a', 'i', 't', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan'];
+const labels = ['a', 'i', 't', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan', 'unknown'];
 
 /**
  * `extract` decode wav based on `filePath`, frame it, extract by FFT and MFCC and
@@ -101,11 +101,11 @@ function uploadSpeech(address, port, request) {
 /**
  * `identifySpeech` load lastest saved trained model from MongoDB `models` collection.
  * Use it to identify the speech file from `filePath` by `extract` then feed it to `model`.
- * Matched speech will register the phoneme to corresponding `name` and update it on MongoDB.
+ * Matched speech will register the syllable to corresponding `name` and update it on MongoDB.
  * 
  * Error connection will return message. Not found model will return message. Unsatisfied identification,
  * results below 0.75 (75%) from `model` will return message. None of those is occured will update the MongoDB
- * `speechDatas` collection on its `name` and identified phoneme `filePath` and return message. The returned 
+ * `speechDatas` collection on its `name` and identified syllable `filePath` and return message. The returned 
  * message wheter just information or even error is return as `status`.
  */
 function identifySpeech(request) {
@@ -155,8 +155,8 @@ function identifySpeech(request) {
       const labelData = prediction[predictionLabel]
 
       // return if result unsatisfied, below 75%.
-      if (labelData < 0.75) {
-        status = 'No phonemes matched.';
+      if (labelData < 0.75 || label === 'unknown') {
+        status = 'No syllables matched.';
         console.log('Status:', status);
 
         resolve(JSON.stringify({ status: status }));
@@ -164,18 +164,18 @@ function identifySpeech(request) {
         // find if `name` is already registered in MongoDB or not.
         try {
           model.speechDatas.db = await connection.connect();
-          resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id').exec();
+          resultDB = await model.speechDatas.findOne({ name: name }).select('syllables -_id').exec();
 
           // create the document if not found, update if found before update to MongoDB.
           let updateData = {};
           if (resultDB === null) {
             updateData.name = name;
-            updateData.phonemes = {};
-            updateData.phonemes[label] = filePath
+            updateData.syllables = {};
+            updateData.syllables[label] = filePath
           }
           else {
             updateData = resultDB;
-            updateData.phonemes[label] = filePath
+            updateData.syllables[label] = filePath
           }
           await model.speechDatas.updateOne({ name: name }, updateData, { upsert: true });
 
@@ -187,7 +187,7 @@ function identifySpeech(request) {
           resolve(JSON.stringify({ status: status }));
         }
 
-        status = 'Matched phoneme ' + label + ' (' + (labelData.toFixed(2) / 1 * 100) + '%)! Phoneme registered to ' + name + '.';
+        status = 'Matched syllable ' + label + ' (' + (labelData.toFixed(2) / 1 * 100) + '%)! syllable registered to ' + name + '.';
         console.log('Status:', status);
 
         // return success identify speech information. 

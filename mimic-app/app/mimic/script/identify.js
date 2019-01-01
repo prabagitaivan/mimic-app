@@ -148,7 +148,7 @@ btnIdentify.onclick = function () {
   if (input.value.length === 0) {
     alert('Please input speech id');
   } else if (filePath.length === 0) {
-    alert('Please record some shown phonemes');
+    alert('Please record some shown syllable');
   } else {
     const data = {
       name: input.value,

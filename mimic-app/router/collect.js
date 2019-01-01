@@ -51,6 +51,7 @@ async function router(address, port, filename, request) {
     else if (filename.toString().indexOf('\\uploadCollectRi') != -1) response = await uploadCollect(address, port, 'ri', request);
     else if (filename.toString().indexOf('\\uploadCollectKu') != -1) response = await uploadCollect(address, port, 'ku', request);
     else if (filename.toString().indexOf('\\uploadCollectKan') != -1) response = await uploadCollect(address, port, 'kan', request);
+    else if (filename.toString().indexOf('\\uploadCollectUnknown') != -1) response = await uploadCollect(address, port, 'unknown', request);
   }
 
   return response;

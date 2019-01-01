@@ -4,7 +4,7 @@
   "description": "app to mimic speech in bahasa indonesia",
   "main": "server.js",
   "scripts": {
-    "setup": "npm install && mkdir data && cd data && mkdir collect speech generate train && cd collect && mkdir a i t na ma mu di ri ku kan && cd ../train && mkdir model",
+    "setup": "npm install && mkdir data && cd data && mkdir collect speech generate train && cd collect && mkdir a i t na ma mu di ri ku kan unknown && cd ../train && mkdir model",
     "start": "node server.js",
     "train": "node app/train/train.js"
   },

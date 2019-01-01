@@ -36,11 +36,11 @@ async function loadSpeech() {
 }
 
 /**
- * `generateSpeech` load registered phonemes from MongoDB `speechDatas` collection based on `name`.
+ * `generateSpeech` load registered syllables from MongoDB `speechDatas` collection based on `name`.
  * Extract `words` as `extractWord`. Decode all coresponding `extractWord` based on the database result.
  * Combine them and encode to wav file and take its `fileURL` location.
  *  
- * Return the url as `fileURL` and `error` message if connection error or unregistered phoneme is found.
+ * Return the url as `fileURL` and `error` message if connection error or unregistered syllable is found.
  */
 function generateSpeech(address, port, request) {
   const form = new formidable.IncomingForm();
@@ -56,10 +56,10 @@ function generateSpeech(address, port, request) {
       let resultDB = {};
       let buffer;
 
-      // load registered phonemes from MongoDB.
+      // load registered syllables from MongoDB.
       try {
         model.speechDatas.db = await connection.connect();
-        resultDB = await model.speechDatas.findOne({ name: name }).select('phonemes -_id').exec();
+        resultDB = await model.speechDatas.findOne({ name: name }).select('syllables -_id').exec();
         await connection.disconnect();
       } catch (err) { // return if connection error is occured.
         error = err.errmsg;
@@ -68,26 +68,26 @@ function generateSpeech(address, port, request) {
         resolve(JSON.stringify({ fileURL: fileURL, error: error }));
       }
 
-      // take just the phonemes from `resultDB`.
-      const phonemes = [];
-      for (phoneme in resultDB.phonemes) phonemes.push(phoneme);
+      // take just the syllables from `resultDB`.
+      const syllables = [];
+      for (syllable in resultDB.syllables) syllables.push(syllable);
 
       // extract the `words`.
       const extractWord = [];
       for (i = 0; i < words.length; i++) {
         if (words[i] === ' ') { // check if it is space.
           extractWord.push(' ');
-        } else if (i + 3 <= words.length && phonemes.includes(words.substring(i, i + 3))) { // check if it the next 3 char is in `phonemes`. 
+        } else if (i + 3 <= words.length && syllables.includes(words.substring(i, i + 3))) { // check if it the next 3 char is in `syllables`. 
           extractWord.push(words.substring(i, i + 3));
           i = i + 2;
-        } else if (i + 2 <= words.length && phonemes.includes(words.substring(i, i + 2))) { // check if it the next 2 char is in `phonemes`. 
+        } else if (i + 2 <= words.length && syllables.includes(words.substring(i, i + 2))) { // check if it the next 2 char is in `syllables`. 
           extractWord.push(words.substring(i, i + 2));
           i = i + 1;
-        } else if (phonemes.includes(words.substring(i, i + 1))) { // check if it the next char is in `phonemes`. 
+        } else if (syllables.includes(words.substring(i, i + 1))) { // check if it the next char is in `syllables`. 
           extractWord.push(words.substring(i, i + 1));
-        } else { // return if unregistered phoneme is found.
+        } else { // return if unregistered syllable is found.
           error = words[i] + ' is not found or registered from the speech data. ' +
-            'Registered ' + name + ' phonemes : ' + phonemes;
+            'Registered ' + name + ' syllables : ' + syllables;
           console.log('Error:', error);
 
           resolve(JSON.stringify({ fileURL: fileURL, error: error }));
@@ -106,7 +106,7 @@ function generateSpeech(address, port, request) {
         if (extractWord[i] === ' ') { // if space it fill the `nextAmpli` with 0 `sampleRate` times.
           nextAmpli = new Float32Array(sampleRate).map(() => 0);
         } else { // else it fill from the decode result based on `resultDB` and corresponding `extractWord`.
-          buffer = fs.readFileSync(resultDB.phonemes[extractWord[i]]);
+          buffer = fs.readFileSync(resultDB.syllables[extractWord[i]]);
           nextAmpli = wav.decode(buffer).channelData[0].slice(0, sampleRate);
         }
 
