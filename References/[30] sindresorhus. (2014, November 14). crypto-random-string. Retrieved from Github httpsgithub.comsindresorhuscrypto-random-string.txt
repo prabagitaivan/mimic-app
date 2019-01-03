@@ -1,0 +1,1 @@
+sindresorhus. (2014, November 14). crypto-random-string. Retrieved from Github: https://github.com/sindresorhus/crypto-random-string

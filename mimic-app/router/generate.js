@@ -8,7 +8,7 @@ const model = require('../db/model');
 /**
  * `loadSpeech` load all registered name from MongoDB `speechDatas` collection.
  * 
- * Return the array of name as `data` and `error` message if nothing is found or
+ * Return the array of name as `id` and `error` message if nothing is found or
  * connection error.
  */
 async function loadSpeech() {
@@ -29,10 +29,10 @@ async function loadSpeech() {
     console.log('Error:', error);
   }
 
-  const data = resultDB.map((data) => data.name);
+  const id = resultDB.map((data) => data.name);
 
-  console.log('speechData:', data);
-  return JSON.stringify({ speechData: data, error: error });
+  console.log('speechId:', id);
+  return JSON.stringify({ speechId: id, error: error });
 }
 
 /**
@@ -99,22 +99,22 @@ function generateSpeech(address, port, request) {
       const channelData = [new Float32Array(0)];
       // iterate each `extractWord`.
       for (i = 0; i < extractWord.length; i++) {
-        const prevAmpli = channelData[0];
+        const prevFreq = channelData[0];
         const offset = channelData[0].length;
 
-        let nextAmpli;
-        if (extractWord[i] === ' ') { // if space it fill the `nextAmpli` with 0 `sampleRate` times.
-          nextAmpli = new Float32Array(sampleRate).map(() => 0);
+        let nextFreq;
+        if (extractWord[i] === ' ') { // if space it fill the `nextFreq` with 0 `sampleRate` times.
+          nextFreq = new Float32Array(sampleRate).map(() => 0);
         } else { // else it fill from the decode result based on `resultDB` and corresponding `extractWord`.
           buffer = fs.readFileSync(resultDB.syllables[extractWord[i]]);
-          nextAmpli = wav.decode(buffer).channelData[0].slice(0, sampleRate);
+          nextFreq = wav.decode(buffer).channelData[0].slice(0, sampleRate);
         }
 
-        // arrange the ampli and redefined the `channelData`.
-        const ampli = new Float32Array(sampleRate + offset);
-        ampli.set(prevAmpli);
-        ampli.set(nextAmpli, offset);
-        channelData[0] = ampli;
+        // arrange the frequency and redefined the `channelData`.
+        const freq = new Float32Array(sampleRate + offset);
+        freq.set(prevFreq);
+        freq.set(nextFreq, offset);
+        channelData[0] = freq;
       }
 
       // define upload directory.

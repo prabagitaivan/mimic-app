@@ -103,7 +103,7 @@ function uploadSpeech(address, port, request) {
  * Use it to identify the speech file from `filePath` by `extract` then feed it to `model`.
  * Matched speech will register the syllable to corresponding `name` and update it on MongoDB.
  * 
- * Error connection will return message. Not found model will return message. Unsatisfied identification,
+ * Error connection will return message. Not found model will return message. Unsatisfied identification or
  * results below 0.75 (75%) from `model` will return message. None of those is occured will update the MongoDB
  * `speechDatas` collection on its `name` and identified syllable `filePath` and return message. The returned 
  * message wheter just information or even error is return as `status`.

@@ -1,11 +1,10 @@
-Figure 5.4 Rescreenshot update
-Figure 5.6 ada phoneme
-Figure 5.11 ada phoneme
-Figure 5.18 ada phoneme
-Figure 5.21 ada phoneme
-Figure 5.24 ada phoneme
-Figure 5.31 rescrenshot update
-Figure 5.32 rescrenshot update
-Figure 5.33 part (2)
-6.2 all figure screenshot scenariodan table tester result
-Update Table of Content-Table-Figure-References
+Figure 5.14 Screenshoot train model update
+5.2.2.2 train extractWav
+Figure 6.3 Some screenshot from the Mimic application scenarios
+Table and Figure 6.4 Some screenshot result
+Table and Figure 6.5 Some screenshot result
+Table and Figure 6.6 Some screenshot result
+Table of Content page
+List of Table page
+List of Figure and Figure 5.14 dan 6.3 - 6.6
+References Update

@@ -1,5 +1,5 @@
 const audio = document.querySelector('audio');
-const input = document.querySelector('input');
+const inSpeechId = document.querySelector('#inSpeechId');
 const btnRecord = document.querySelector('#btnRecord');
 const btnIdentify = document.querySelector('#btnIdentify');
 const btnFinish = document.querySelector('#btnFinish');
@@ -39,7 +39,7 @@ function xhrPostUploadFile(file) {
 }
 
 /**
- * `xhrPostIdentifySpeech` send `words` based on `name` to server, convert it to wav file and uri.
+ * `xhrPostIdentifySpeech` send `name` and `filePath` to server, identify it and save to MongoDB.
  * 
  * Send POST `identifySpeech` request with input text as `name` and `filePath` on it.
  * Accept `status` from response and alert it.
@@ -145,13 +145,13 @@ btnRecord.onclick = function () {
  * Existed and not empty values will pass the value to `xhrPostIdentifySpeech`
  */
 btnIdentify.onclick = function () {
-  if (input.value.length === 0) {
+  if (inSpeechId.value.length === 0) {
     alert('Please input speech id');
   } else if (filePath.length === 0) {
     alert('Please record some shown syllable');
   } else {
     const data = {
-      name: input.value,
+      name: inSpeechId.value,
       filePath: filePath
     };
 
