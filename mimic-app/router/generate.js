@@ -99,22 +99,22 @@ function generateSpeech(address, port, request) {
       const channelData = [new Float32Array(0)];
       // iterate each `extractWord`.
       for (i = 0; i < extractWord.length; i++) {
-        const prevFreq = channelData[0];
+        const prevSample = channelData[0];
         const offset = channelData[0].length;
 
-        let nextFreq;
-        if (extractWord[i] === ' ') { // if space it fill the `nextFreq` with 0 `sampleRate` times.
-          nextFreq = new Float32Array(sampleRate).map(() => 0);
+        let nextSample;
+        if (extractWord[i] === ' ') { // if space it fill the `nextSample` with 0 `sampleRate` times.
+          nextSample = new Float32Array(sampleRate).map(() => 0);
         } else { // else it fill from the decode result based on `resultDB` and corresponding `extractWord`.
           buffer = fs.readFileSync(resultDB.syllables[extractWord[i]]);
-          nextFreq = wav.decode(buffer).channelData[0].slice(0, sampleRate);
+          nextSample = wav.decode(buffer).channelData[0].slice(0, sampleRate);
         }
 
-        // arrange the frequency and redefined the `channelData`.
-        const freq = new Float32Array(sampleRate + offset);
-        freq.set(prevFreq);
-        freq.set(nextFreq, offset);
-        channelData[0] = freq;
+        // arrange the sample and redefined the `channelData`.
+        const sample = new Float32Array(sampleRate + offset);
+        sample.set(prevSample);
+        sample.set(nextSample, offset);
+        channelData[0] = sample;
       }
 
       // define upload directory.
