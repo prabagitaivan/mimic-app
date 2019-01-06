@@ -102,7 +102,6 @@ function extractWav(file, label) {
   let dctSample = [];
   dctSample = logSample.map(frame => new Float32Array(dct(frame).slice(0, 13)));
 
-
   return { data: dctSample, label };
 }
 
