@@ -32,3 +32,6 @@ $ npm run train
   - https://github.com/muaz-khan/RecordRTC/tree/master/RecordRTC-to-Nodejs
   - https://github.com/tensorflow/tensorflow/tree/master/tensorflow/examples/speech_commands
   - https://github.com/tensorflow/tfjs-models/tree/master/speech-commands
+  - https://github.com/jameslyons/python_speech_features/tree/master/python_speech_features
+  - https://github.com/vail-systems/node-mfcc/blob/master/src/mfcc.js
+  - https://github.com/meyda/meyda/blob/master/src/extractors/mfcc.js

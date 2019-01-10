@@ -9,7 +9,7 @@ require('@tensorflow/tfjs-node');
 const connection = require('../db/connection');
 const model = require('../db/model');
 
-const labels = ['a', 'i', 't', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan', 'unknown'];
+const labels = ['a', 'i', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan', 'unknown'];
 
 /**
  * `createMelFilterbank` create filterbank for extraction process.
@@ -191,7 +191,7 @@ function extractAndConvert(filePath) {
  * Return the url and path location as `fileURL` and `filePath`.
  */
 function uploadSpeech(address, port, request) {
-  const dirData = '\\data\\';
+  const dirData = '\\data';
   const dirSpeech = '\\speech\\';
 
   const form = new formidable.IncomingForm();

@@ -2,7 +2,7 @@ const fs = require('fs');
 const shuffle = require('shuffle-array');
 const extractWav = require('./extractWav');
 
-const labels = ['a', 'i', 't', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan', 'unknown'];
+const labels = ['a', 'i', 'na', 'ma', 'mu', 'di', 'ri', 'ku', 'kan', 'unknown'];
 const loadTrain = [];
 const loadValidation = [];
 const loadTest = [];

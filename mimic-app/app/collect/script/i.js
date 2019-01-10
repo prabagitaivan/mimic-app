@@ -17,5 +17,5 @@ function postFiles() {
 }
 
 btnNext.onclick = function () {
-  open('/app/collect/t.html', '_self');
+  open('/app/collect/na.html', '_self');
 };

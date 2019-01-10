@@ -4,7 +4,7 @@
   "description": "app to mimic speech in bahasa indonesia",
   "main": "server.js",
   "scripts": {
-    "setup": "npm install && mkdir data && cd data && mkdir collect speech generate train && cd collect && mkdir a i t na ma mu di ri ku kan unknown && cd ../train && mkdir model",
+    "setup": "npm install && mkdir data && cd data && mkdir collect speech generate train && cd collect && mkdir a i na ma mu di ri ku kan unknown && cd ../train && mkdir model",
     "start": "node server.js",
     "train": "node app/train/train.js"
   },
@@ -18,7 +18,7 @@
     "formidable": "^1.2.1",
     "mongoose": "^5.3.14",
     "node-wav": "0.0.2",
-    "recordrtc": "^5.4.8",
+    "recordrtc": "^5.5.0",
     "shuffle-array": "^1.0.1"
   }
 }

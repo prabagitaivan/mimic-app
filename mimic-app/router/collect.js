@@ -8,8 +8,8 @@ const util = require('util');
  * Return the url as `fileURL`.
  */
 function uploadCollect(address, port, label, request) {
-  const dirData = '\\data\\';
-  const dirCollect = '\\collect\\';
+  const dirData = '\\data';
+  const dirCollect = '\\collect';
   const dirLabel = '\\' + label + '\\';
 
   const form = new formidable.IncomingForm();
@@ -43,7 +43,6 @@ async function router(address, port, filename, request) {
   if (request.method === 'POST') {
     if (filename.toString().indexOf('\\uploadCollectA') != -1) response = await uploadCollect(address, port, 'a', request);
     else if (filename.toString().indexOf('\\uploadCollectI') != -1) response = await uploadCollect(address, port, 'i', request);
-    else if (filename.toString().indexOf('\\uploadCollectT') != -1) response = await uploadCollect(address, port, 't', request);
     else if (filename.toString().indexOf('\\uploadCollectNa') != -1) response = await uploadCollect(address, port, 'na', request);
     else if (filename.toString().indexOf('\\uploadCollectMa') != -1) response = await uploadCollect(address, port, 'ma', request);
     else if (filename.toString().indexOf('\\uploadCollectMu') != -1) response = await uploadCollect(address, port, 'mu', request);
