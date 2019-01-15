@@ -7,7 +7,7 @@ const preEmphasis = 0;
 const sampleRate = 16000;
 const frameSize = 25 / 1000 * sampleRate; // 400
 const frameShift = 10 / 1000 * sampleRate; // 160
-const window = 'hamming';
+const window = '';
 const fftSize = 512; // based on the next power of 2 from 400 -> 512.
 const lowFreq = 300;
 const highFreq = 8000;
@@ -21,7 +21,7 @@ const melFilter = 40;
 function extractWav(file, label) {
   // decode wav.
   let sample;
-  const sample = wav.decode(fs.readFileSync(process.cwd() + '/data/collect/' + label + '/' + file)).channelData[0];
+  sample = wav.decode(fs.readFileSync(process.cwd() + '/data/collect/' + label + '/' + file)).channelData[0];
 
   // framing and windowing the sample.
   let preSample;
@@ -44,7 +44,7 @@ function extractWav(file, label) {
     frameSample.push(frame);
   }
   let winSample = [];
-  if (window === 'hamming') {
+  if (window === 'hamming') { // windowing use hamming is waste because decoded wav have too many trailing zeros.
     winSample = frameSample.map(frame =>
       frame.map(sample => 0.54 - 0.46 * Math.cos((2 * Math.PI * sample) / (frameSize - 1)))
     );
@@ -70,7 +70,9 @@ function extractWav(file, label) {
   }
   fftSample = prefftSample.map(frame => fft.util.fftMag(fft.fft(frame)));
   powSample = fftSample.map(frame =>
-    new Float32Array(frame.map(sample => Math.pow(Math.abs(sample), 2) / fftSize))
+    // With to the power produce double the trailing zeros.
+    // new Float32Array(frame.map(sample => Math.pow(Math.abs(sample), 2) / fftSize))
+    new Float32Array(frame.map(sample => sample))
   );
 
   // calculate mel filterbank and dot product with the sample.

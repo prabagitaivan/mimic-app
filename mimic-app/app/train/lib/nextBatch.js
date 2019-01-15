@@ -2,31 +2,30 @@ const tf = require('@tensorflow/tfjs');
 
 /**
  * `getData` convert corresponding `dataset` data based on `iteration`, 
- * `batch`, `time`, `freq` to tensorflow input.
+ * `batch`, `frame`, `sample` to tensorflow input.
  * 
- * Define tensorflow input shape from `batch`, `time`, and `freq`.
+ * Define tensorflow input shape from `batch`, `frame`, and `sample`.
  * Define tensorflow input data convert it by rearrange the data inside `dataset` based on
- * `batch`, `iteration`, `time`, and `freq`. Then it return as 4d tensor.
+ * `batch`, `iteration`, `frame`, and `sample`. Then it return as 4d tensor.
  */
-function getData(dataset, iteration, batch, time, freq) {
-  const data = new Float32Array(batch * time * freq);
-  const shape = [batch, time, freq, 1]; // 1 because of B/W color.
+function getData(dataset, iteration, batch, frame, sample) {
+  const data = new Float32Array(batch * frame * sample);
+  const shape = [batch, frame, sample, 1]; // 1 because of B/W color.
 
   for (j = 0; j < batch; j++) {
-    let spectogram;
+    let datasetData;
 
-    if (iteration + j >= dataset.length) spectogram = dataset[(iteration + j) % dataset.length].data;
-    else spectogram = dataset[iteration + j].data;
+    if (iteration + j >= dataset.length) datasetData = dataset[(iteration + j) % dataset.length].data;
+    else datasetData = dataset[iteration + j].data;
 
-    for (k = 0; k < time; k++) {
-      const melFreq = spectogram[k];
-      const offset = j * freq * time + k * freq;
+    for (k = 0; k < frame; k++) {
+      const datasetSample = datasetData[k];
+      const offset = j * sample * frame + k * sample;
 
-      data.set(melFreq, offset);
+      data.set(datasetSample, offset);
     }
   }
 
-  tf.tensor4d(data, shape).print();
   return tf.tensor4d(data, shape);
 }
 

@@ -77,7 +77,7 @@ function extractAndConvert(filePath) {
   const sampleRate = 16000;
   const frameSize = 25 / 1000 * sampleRate; // 400
   const frameShift = 10 / 1000 * sampleRate; // 160
-  const window = 'hamming';
+  const window = '';
   const fftSize = 512; // based on the next power of 2 from 400 -> 512.
   const lowFreq = 300;
   const highFreq = 8000;
@@ -85,7 +85,7 @@ function extractAndConvert(filePath) {
 
   // decode wav.
   let sample;
-  const sample = wav.decode(fs.readFileSync(filePath)).channelData[0];
+  sample = wav.decode(fs.readFileSync(filePath)).channelData[0];
 
   // framing and windowing the sample.
   let preSample;
@@ -108,7 +108,7 @@ function extractAndConvert(filePath) {
     frameSample.push(frame);
   }
   let winSample = [];
-  if (window === 'hamming') {
+  if (window === 'hamming') { // windowing use hamming is waste because decoded wav have too many trailing zeros.
     winSample = frameSample.map(frame =>
       frame.map(sample => 0.54 - 0.46 * Math.cos((2 * Math.PI * sample) / (frameSize - 1)))
     );
@@ -134,7 +134,9 @@ function extractAndConvert(filePath) {
   }
   fftSample = prefftSample.map(frame => fft.util.fftMag(fft.fft(frame)));
   powSample = fftSample.map(frame =>
-    new Float32Array(frame.map(sample => Math.pow(Math.abs(sample), 2) / fftSize))
+    // With to the power produce double the trailing zeros.
+    // new Float32Array(frame.map(sample => Math.pow(Math.abs(sample), 2) / fftSize))
+    new Float32Array(frame.map(sample => sample))
   );
 
   // calculate mel filterbank and dot product with the sample.
@@ -275,6 +277,7 @@ function identifySpeech(request) {
       // return if result unsatisfied, below 75%.
       if (labelData < 0.75 || label === 'unknown') {
         status = 'No syllables matched.';
+        console.log('Highest predictions ' + label + ' with ' + labelData + ' accuracy.');
         console.log('Status:', status);
 
         resolve(JSON.stringify({ status: status }));

@@ -15,26 +15,25 @@ const loadTest = [];
  */
 function extractFiles(load, type) {
   const data = [];
-  let lastSpectogram;
+  let lastExtract;
 
   // shuffle `load` to avoid overfitting model.
   load = shuffle(load);
 
-  for (k = 0; k < load.length; k++) {
-    const spectogram = extractWav(load[k].file, load[k].label);
-    if (k !== 0 && lastSpectogram !== 'undefined'
-      && lastSpectogram.data.length !== spectogram.data.length) {
-      console.log(load[k - 1].file + ' (label : ' + load[k - 1].label + ')' +
+  for (l = 0; l < load.length; l++) {
+    const extract = extractWav(load[l].file, load[l].label);
+    if (l !== 0 && typeof lastExtract !== 'undefined' && lastExtract.data.length !== extract.data.length) {
+      console.log(load[l - 1].file + ' (label : ' + load[l - 1].label + ')' +
         ' is different with data [time] ' +
-        load[k].file + ' (label : ' + load[k].label + '). ' +
+        load[l].file + ' (label : ' + load[l].label + '). ' +
         'Please check again. Default time is 1 second. Process exiting.');
       process.exit();
     } else {
-      data.push(spectogram);
+      data.push(extract);
     }
 
-    lastSpectogram = spectogram;
-    console.log(new Date().toISOString() + ' | Step ' + (k + 1) + ' | Extracting ' + type + ' Wav: ' + load[k].file);
+    lastExtract = extract;
+    console.log(new Date().toISOString() + ' | Step ' + (l + 1) + ' | Extracting ' + type + ' Wav: ' + load[l].file);
   }
 
   return data;
