@@ -28,6 +28,7 @@ function uploadCollect(address, port, label, request) {
 
       console.log('fileURL: ', fileURL);
       resolve(JSON.stringify({ fileURL: fileURL }));
+      return;
     });
   });
 }

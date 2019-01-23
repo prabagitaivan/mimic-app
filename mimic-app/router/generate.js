@@ -66,6 +66,7 @@ function generateSpeech(address, port, request) {
         console.log('Error:', error);
 
         resolve(JSON.stringify({ fileURL: fileURL, error: error }));
+        return;
       }
 
       // take just the syllables from `resultDB`.
@@ -91,6 +92,7 @@ function generateSpeech(address, port, request) {
           console.log('Error:', error);
 
           resolve(JSON.stringify({ fileURL: fileURL, error: error }));
+          return;
         }
       }
 
@@ -131,6 +133,7 @@ function generateSpeech(address, port, request) {
       fileURL = 'http://' + address + ':' + port + '/data/generate/' + fileName;
       console.log('fileURL:', fileURL);
       resolve(JSON.stringify({ fileURL: fileURL }));
+      return;
     });
   });
 }

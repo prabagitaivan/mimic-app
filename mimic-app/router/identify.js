@@ -214,6 +214,7 @@ function uploadSpeech(address, port, request) {
       console.log('fileURL: ', fileURL);
       console.log('filePath: ', filePath);
       resolve(JSON.stringify({ fileURL: fileURL, filePath: filePath }));
+      return;
     });
   });
 }
@@ -252,12 +253,14 @@ function identifySpeech(request) {
           console.log('Status:', status);
 
           resolve(JSON.stringify({ status: status }));
+          return;
         }
       } catch (err) { // return if connection error is occured.
         status = err.errmsg;
         console.log('Status:', status);
 
         resolve(JSON.stringify({ status: status }));
+        return;
       }
 
       // load the model as `tfModel` from model location and extract speech as `data` from `filePath`. 
@@ -281,6 +284,7 @@ function identifySpeech(request) {
         console.log('Status:', status);
 
         resolve(JSON.stringify({ status: status }));
+        return;
       } else {
         // find if `name` is already registered in MongoDB or not.
         try {
@@ -306,6 +310,7 @@ function identifySpeech(request) {
           console.log('Status:', status);
 
           resolve(JSON.stringify({ status: status }));
+          return;
         }
 
         status = 'Matched syllable ' + label + ' (' + (labelData.toFixed(2) / 1 * 100) + '%)! syllable registered to ' + name + '.';
@@ -313,6 +318,7 @@ function identifySpeech(request) {
 
         // return success identify speech information. 
         resolve(JSON.stringify({ status: status }));
+        return;
       }
     });
   });
