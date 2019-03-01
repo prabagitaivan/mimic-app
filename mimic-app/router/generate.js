@@ -110,6 +110,8 @@ function generateSpeech(address, port, request) {
         } else { // else it fill from the decode result based on `resultDB` and corresponding `extractWord`.
           buffer = fs.readFileSync(resultDB.syllables[extractWord[i]]);
           nextSample = wav.decode(buffer).channelData[0].slice(0, sampleRate);
+          // multiply sample to make generated speech louder
+          nextSample = nextSample.map((x) => x * 5);
         }
 
         // arrange the sample and redefined the `channelData`.

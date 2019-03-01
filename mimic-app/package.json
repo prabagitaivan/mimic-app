@@ -6,7 +6,8 @@
   "scripts": {
     "setup": "npm install && mkdir data && cd data && mkdir collect speech generate train && cd collect && mkdir a i na ma mu di ri ku kan unknown && cd ../train && mkdir model",
     "start": "node server.js",
-    "train": "node app/train/train.js"
+    "train": "node app/train/train.js",
+    "load": "npm install && ren data.develop data && node db/load.js"
   },
   "author": "Prabagita Ivan",
   "license": "ISC",
